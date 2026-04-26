@@ -5,164 +5,224 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root {
-            --bg-color: var(--tg-theme-bg-color, #181818);
-            --text-color: var(--tg-theme-text-color, #ffffff);
-            --hint-color: var(--tg-theme-hint-color, #999999);
-            --btn-color: var(--tg-theme-button-color, #2481cc);
-            --btn-text: var(--tg-theme-button-text-color, #ffffff);
-            --card-bg: var(--tg-theme-secondary-bg-color, #2c2c2c);
-        }
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background-color: var(--tg-theme-bg-color, #181818);
+            color: var(--tg-theme-text-color, #ffffff);
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 0;
-            line-height: 1.5;
         }
         .header {
+            padding: 20px;
             text-align: center;
-            padding: 20px 15px;
-            background-color: var(--card-bg);
-            border-bottom: 3px solid var(--btn-color);
-            border-radius: 0 0 15px 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            background-color: var(--tg-theme-secondary-bg-color, #2c2c2c);
+            border-bottom: 2px solid var(--tg-theme-button-color, #2481cc);
         }
-        .header h1 { margin: 0; font-size: 24px; }
-        .header p { margin: 5px 0 0; font-size: 14px; color: var(--hint-color); }
+        .header h1 { margin: 0; font-size: 22px; color: var(--tg-theme-text-color); }
+        .header p { margin: 5px 0 0; font-size: 14px; color: var(--tg-theme-hint-color, #999); }
         
-        .container { padding: 15px; margin-bottom: 80px; }
-        
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 15px;
+        /* Стили для кнопок-аккордеонов */
+        .accordion {
+            background-color: var(--tg-theme-secondary-bg-color, #2c2c2c);
+            color: var(--tg-theme-text-color, #ffffff);
+            cursor: pointer;
             padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        .card h2 {
-            margin-top: 0;
-            font-size: 18px;
-            color: var(--btn-color);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border-bottom: 1px solid rgba(128, 128, 128, 0.2);
-            padding-bottom: 10px;
-        }
-        .cmd-list { list-style: none; padding: 0; margin: 0; }
-        .cmd-list li {
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(128, 128, 128, 0.1);
-            font-size: 15px;
-        }
-        .cmd-list li:last-child { border-bottom: none; padding-bottom: 0; }
-        
-        .cmd {
-            background-color: rgba(128, 128, 128, 0.15);
-            padding: 2px 6px;
-            border-radius: 5px;
-            font-family: monospace;
-            color: var(--btn-color);
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 16px;
             font-weight: bold;
+            transition: 0.3s;
+            border-bottom: 1px solid rgba(128, 128, 128, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .warn {
-            background-color: rgba(255, 69, 58, 0.1);
-            color: #ff453a;
-            padding: 8px;
+        .active, .accordion:hover {
+            background-color: rgba(128, 128, 128, 0.2);
+        }
+        .accordion:after {
+            content: '\002B'; /* Плюсик */
+            color: var(--tg-theme-button-color, #2481cc);
+            font-weight: bold;
+            font-size: 20px;
+        }
+        .active:after {
+            content: "\2212"; /* Минус */
+        }
+        
+        /* Стили для выпадающего контента */
+        .panel {
+            padding: 0 15px;
+            background-color: var(--tg-theme-bg-color, #181818);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.2s ease-out;
+        }
+        
+        /* Стили для самих команд */
+        .cmd-card {
+            background-color: rgba(128, 128, 128, 0.1);
+            padding: 10px;
+            margin: 10px 0;
             border-radius: 8px;
-            font-size: 13px;
-            margin-bottom: 10px;
-            border-left: 3px solid #ff453a;
+            border-left: 4px solid var(--tg-theme-button-color, #2481cc);
         }
+        .cmd-title {
+            font-family: monospace;
+            font-size: 15px;
+            font-weight: bold;
+            color: var(--tg-theme-button-color, #2481cc);
+        }
+        .cmd-desc {
+            font-size: 14px;
+            margin-top: 5px;
+            line-height: 1.4;
+        }
+        .cmd-usage {
+            font-size: 12px;
+            color: var(--tg-theme-hint-color, #999);
+            margin-top: 5px;
+            font-style: italic;
+        }
+        .warn-text {
+            color: #ff453a;
+            font-size: 13px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .spacer { height: 80px; }
         
         .btn-close {
-            background-color: var(--btn-color);
-            color: var(--btn-text);
+            background-color: var(--tg-theme-button-color, #2481cc);
+            color: var(--tg-theme-button-text-color, #ffffff);
             border: none;
-            padding: 16px;
+            padding: 15px;
             border-radius: 12px;
             font-size: 16px;
             font-weight: bold;
             position: fixed;
             bottom: 15px;
             left: 15px;
-            right: 15px;
             width: calc(100% - 30px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>🤖 Справочник Haizen</h1>
-        <p>Полный гайд по выживанию, экономике и боям</p>
+        <h1>🤖 База знаний Haizen</h1>
+        <p>Нажимай на разделы, чтобы узнать подробности</p>
     </div>
 
-    <div class="container">
-        
-        <div class="card">
-            <h2>💰 Экономика и Банк</h2>
-            <ul class="cmd-list">
-                <li><span class="cmd">кошелек</span> — Узнать свой баланс наличных.</li>
-                <li><span class="cmd">магазин</span> — Открыть список товаров (оружие, выпивка, сигареты).</li>
-                <li><span class="cmd">купить [ID]</span> — Купить товар из магазина (например: <i>купить 1.1</i>).</li>
-                <li><span class="cmd">банк</span> (или <span class="cmd">б</span>) — Посмотреть счет в банке.</li>
-                <li><span class="cmd">депозит [сумма]</span> — Положить мани в банк под защиту.</li>
-                <li><span class="cmd">снять [сумма]</span> — Забрать деньги из банка.</li>
-            </ul>
+    <button class="accordion">💰 Финансы и Магазин</button>
+    <div class="panel">
+        <div class="cmd-card">
+            <div class="cmd-title">кошелек</div>
+            <div class="cmd-desc">Показывает твой текущий баланс наличных мани.</div>
+            <div class="cmd-usage">Как применять: просто напиши в чат.</div>
         </div>
-
-        <div class="card">
-            <h2>⚔️ Игры и Боевая система</h2>
-            <div class="warn">ВНИМАНИЕ: Эти команды работают ТОЛЬКО если написать их в ответ на сообщение другого игрока!</div>
-            <ul class="cmd-list">
-                <li><span class="cmd">атака [ставка]</span> — Вооруженный рейд на игрока. Бот сам выберет твое самое мощное оружие из инвентаря. Чем дороже пушка, тем больше шанс забрать деньги! (Шанс поломки оружия: 15%).</li>
-                <li><span class="cmd">карта [ставка]</span> — Вызвать игрока на карточную дуэль.</li>
-            </ul>
+        <div class="cmd-card">
+            <div class="cmd-title">банк (или б)</div>
+            <div class="cmd-desc">Проверка банковского счета. Деньги в банке нельзя украсть при нападении!</div>
+            <div class="cmd-usage">Команды внутри: "депозит [сумма]" положить, "снять [сумма]" забрать.</div>
         </div>
-
-        <div class="card">
-            <h2>🍷 Инвентарь и Отдых</h2>
-            <ul class="cmd-list">
-                <li><span class="cmd">пфф</span> — Выкурить сигарету. Бот покажет, сколько осталось в пачке и сколько выкурено за всю жизнь.</li>
-                <li><span class="cmd">выпить [класс] [тип]</span> — Умное применение алкоголя. Выбери класс (дорогой/средний/дешевый) и напиток (коньяк/вино/водка). <i>Пример: выпить дорогой коньяк</i>.</li>
-            </ul>
+        <div class="cmd-card">
+            <div class="cmd-title">магазин</div>
+            <div class="cmd-desc">Открывает прайс-лист на оружие, выпивку и сигареты.</div>
         </div>
-
-        <div class="card">
-            <h2>🎭 РП Команды (Более 50 шт.)</h2>
-            <div class="warn">Писать только в ответ на сообщение пользователя!</div>
-            <ul class="cmd-list">
-                <li>💖 <b>Романтика:</b> обнять, поцеловать, засосать, прижать, муркнуть, кусь, лечь рядом...</li>
-                <li>🔞 <b>Горячее (18+):</b> отшлепать, наказать, связать, доминировать, раздеть...</li>
-                <li>💥 <b>Агрессия:</b> уебать с вертухи, застрелить, кинуть прогибом, взорвать, закопать...</li>
-                <li>🌪 <b>Эпический хаос:</b> сватнуть, подарить вселенную, отправить в космос, бросить в вулкан...</li>
-                <li>🤡 <b>Трэш:</b> обоссать, насрать, скурить, лизнуть розетку...</li>
-                <li>💻 <b>Хакерские:</b> задоксить, задеанонить, ддосить, снести...</li>
-            </ul>
+        <div class="cmd-card">
+            <div class="cmd-title">купить [ID]</div>
+            <div class="cmd-desc">Покупка предмета. ID можно посмотреть в магазине.</div>
+            <div class="cmd-usage">Пример: "купить 1.1" (купить сигареты).</div>
         </div>
-
-        <div class="card">
-            <h2>👑 Панель Создателя</h2>
-            <div class="warn">Работает только в Личных Сообщениях бота!</div>
-            <ul class="cmd-list">
-                <li><span class="cmd">база игроков</span> — Бот соберет всех зарегистрированных пользователей, пронумерует их и скинет тебе секретный .txt файл с их балансами и никами.</li>
-            </ul>
-        </div>
-
     </div>
 
-    <button class="btn-close" onclick="Telegram.WebApp.close()">🚀 Понятно, закрыть справочник</button>
+    <button class="accordion">⚔️ Бои и Игры (В ответ!)</button>
+    <div class="panel">
+        <div class="warn-text">ВАЖНО: Эти команды нужно писать только В ОТВЕТ на сообщение другого игрока!</div>
+        <div class="cmd-card">
+            <div class="cmd-title">атака [ставка]</div>
+            <div class="cmd-desc">Рейд на игрока! Бот сам достанет твое самое дорогое оружие из инвентаря. У кого пушка круче — у того больше шансов забрать ставку.</div>
+            <div class="cmd-usage">Пример в ответ: "атака 5000". Внимание: оружие может сломаться с шансом 15%!</div>
+        </div>
+        <div class="cmd-card">
+            <div class="cmd-title">карта [ставка]</div>
+            <div class="cmd-desc">Вызов на карточную дуэль. Бот выдаст инлайн-кнопки для согласия или отказа.</div>
+            <div class="cmd-usage">Пример в ответ: "карта 1000".</div>
+        </div>
+    </div>
+
+    <button class="accordion">🍷 Инвентарь и Отдых</button>
+    <div class="panel">
+        <div class="cmd-card">
+            <div class="cmd-title">пфф</div>
+            <div class="cmd-desc">Выкурить сигарету. Показывает остаток в пачке и общий счетчик курения за всю жизнь. Ник становится кликабельным!</div>
+        </div>
+        <div class="cmd-card">
+            <div class="cmd-title">выпить [класс] [тип]</div>
+            <div class="cmd-desc">Бот найдет в твоем инвентаре нужную бутылку и применит ее. Классы: дорогой, средний, дешевый.</div>
+            <div class="cmd-usage">Пример: "выпить дорогой коньяк" или "выпить дешевую водку".</div>
+        </div>
+    </div>
+
+    <button class="accordion">🎭 РП Команды (Ответ на смс)</button>
+    <div class="panel">
+        <div class="warn-text">Все РП команды пишутся В ОТВЕТ на сообщение!</div>
+        <div class="cmd-card">
+            <div class="cmd-title">💖 Романтика</div>
+            <div class="cmd-desc">обнять, поцеловать, засосать, прижать, погладить, чмокнуть, муркнуть, укутать, согреть, потискать, приласкать, влюбиться, жениться, сделать массаж, понюхать, лечь рядом, держать за руку, кусь.</div>
+        </div>
+        <div class="cmd-card">
+            <div class="cmd-title">💥 Агрессия и Драки</div>
+            <div class="cmd-desc">сжечь, убить, уебать, уебать с вертухи, уебать в челюсть, ударить, пнуть, зарезать, застрелить, утопить, задушить, отравить, взорвать, закопать, расстрелять, избить, уничтожить, сломать, кинуть прогибом, дать леща, дать пощечину, послать, унизить.</div>
+        </div>
+        <div class="cmd-card">
+            <div class="cmd-title">🌪 Хаос и Трэш</div>
+            <div class="cmd-desc">сватнуть, подарить вселенную, вызвать на дуэль, отправить в космос, украсть сердце, облить шампанским, закидать помидорами, дать корону, сделать рабом, выпороть, бросить в вулкан, гавкнуть, хрюкнуть, станцевать гопак, упасть в обморок, скурить, подавиться, лизнуть розетку, удариться головой, закосплеить, укусить за жопу, обоссать, насрать.</div>
+        </div>
+        <div class="cmd-card">
+            <div class="cmd-title">🔞 Горячее (18+)</div>
+            <div class="cmd-desc">трахнуть, отшлепать, шлепнуть, раздеть, связать, наказать, доминировать, лапать, возбудить, лизнуть, отдаться, приставать, укусить за шею.</div>
+        </div>
+        <div class="cmd-card">
+            <div class="cmd-title">💻 Хакерские</div>
+            <div class="cmd-desc">задоксить, снести, задеанонить, взломать, забанить, ддосить, завирусить, отформатировать.</div>
+        </div>
+    </div>
+
+    <button class="accordion">👑 Для Админа (В ЛС бота)</button>
+    <div class="panel">
+        <div class="cmd-card">
+            <div class="cmd-title">база игроков</div>
+            <div class="cmd-desc">Скачать полный лог-файл (TXT) всех пользователей, их ников и балансов. Работает только в личных сообщениях с ботом!</div>
+        </div>
+    </div>
+
+    <div class="spacer"></div>
+    <button class="btn-close" onclick="Telegram.WebApp.close()">🚀 Закрыть и играть!</button>
 
     <script>
-        // Инициализация
+        // Анимация для выпадающих списков
+        var acc = document.getElementsByClassName("accordion");
+        for (var i = 0; i < acc.length; i++) {
+            acc[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var panel = this.nextElementSibling;
+                if (panel.style.maxHeight) {
+                    panel.style.maxHeight = null;
+                } else {
+                    panel.style.maxHeight = panel.scrollHeight + "px";
+                }
+            });
+        }
+
+        // Запуск Telegram Web App
         let tg = window.Telegram.WebApp;
         tg.expand();
-        tg.ready();
     </script>
 </body>
-</html>
+                                                                                                                               </html>
