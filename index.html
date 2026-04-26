@@ -5,48 +5,164 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* Цвета автоматически берутся из темы Телеграма пользователя */
+        :root {
+            --bg-color: var(--tg-theme-bg-color, #181818);
+            --text-color: var(--tg-theme-text-color, #ffffff);
+            --hint-color: var(--tg-theme-hint-color, #999999);
+            --btn-color: var(--tg-theme-button-color, #2481cc);
+            --btn-text: var(--tg-theme-button-text-color, #ffffff);
+            --card-bg: var(--tg-theme-secondary-bg-color, #2c2c2c);
+        }
         body {
-            background-color: var(--tg-theme-bg-color, #181818);
-            color: var(--tg-theme-text-color, #ffffff);
-            font-family: sans-serif;
-            padding: 20px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+        }
+        .header {
             text-align: center;
+            padding: 20px 15px;
+            background-color: var(--card-bg);
+            border-bottom: 3px solid var(--btn-color);
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        h1 {
-            color: var(--tg-theme-button-color, #2481cc);
-        }
-        .btn {
-            background-color: var(--tg-theme-button-color, #2481cc);
-            color: var(--tg-theme-button-text-color, #ffffff);
-            border: none;
+        .header h1 { margin: 0; font-size: 24px; }
+        .header p { margin: 5px 0 0; font-size: 14px; color: var(--hint-color); }
+        
+        .container { padding: 15px; margin-bottom: 80px; }
+        
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 15px;
             padding: 15px;
-            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .card h2 {
+            margin-top: 0;
+            font-size: 18px;
+            color: var(--btn-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+            padding-bottom: 10px;
+        }
+        .cmd-list { list-style: none; padding: 0; margin: 0; }
+        .cmd-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(128, 128, 128, 0.1);
+            font-size: 15px;
+        }
+        .cmd-list li:last-child { border-bottom: none; padding-bottom: 0; }
+        
+        .cmd {
+            background-color: rgba(128, 128, 128, 0.15);
+            padding: 2px 6px;
+            border-radius: 5px;
+            font-family: monospace;
+            color: var(--btn-color);
+            font-weight: bold;
+        }
+        .warn {
+            background-color: rgba(255, 69, 58, 0.1);
+            color: #ff453a;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 10px;
+            border-left: 3px solid #ff453a;
+        }
+        
+        .btn-close {
+            background-color: var(--btn-color);
+            color: var(--btn-text);
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
             font-size: 16px;
-            width: 100%;
-            margin-top: 20px;
+            font-weight: bold;
+            position: fixed;
+            bottom: 15px;
+            left: 15px;
+            right: 15px;
+            width: calc(100% - 30px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-    <h1>Справочник Haizen</h1>
-    <p>Здесь будут красиво расписаны все РП-команды, игры и экономика!</p>
-    
-    <button class="btn" onclick="closeApp()">Понятно, закрыть</button>
+    <div class="header">
+        <h1>🤖 Справочник Haizen</h1>
+        <p>Полный гайд по выживанию, экономике и боям</p>
+    </div>
+
+    <div class="container">
+        
+        <div class="card">
+            <h2>💰 Экономика и Банк</h2>
+            <ul class="cmd-list">
+                <li><span class="cmd">кошелек</span> — Узнать свой баланс наличных.</li>
+                <li><span class="cmd">магазин</span> — Открыть список товаров (оружие, выпивка, сигареты).</li>
+                <li><span class="cmd">купить [ID]</span> — Купить товар из магазина (например: <i>купить 1.1</i>).</li>
+                <li><span class="cmd">банк</span> (или <span class="cmd">б</span>) — Посмотреть счет в банке.</li>
+                <li><span class="cmd">депозит [сумма]</span> — Положить мани в банк под защиту.</li>
+                <li><span class="cmd">снять [сумма]</span> — Забрать деньги из банка.</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>⚔️ Игры и Боевая система</h2>
+            <div class="warn">ВНИМАНИЕ: Эти команды работают ТОЛЬКО если написать их в ответ на сообщение другого игрока!</div>
+            <ul class="cmd-list">
+                <li><span class="cmd">атака [ставка]</span> — Вооруженный рейд на игрока. Бот сам выберет твое самое мощное оружие из инвентаря. Чем дороже пушка, тем больше шанс забрать деньги! (Шанс поломки оружия: 15%).</li>
+                <li><span class="cmd">карта [ставка]</span> — Вызвать игрока на карточную дуэль.</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>🍷 Инвентарь и Отдых</h2>
+            <ul class="cmd-list">
+                <li><span class="cmd">пфф</span> — Выкурить сигарету. Бот покажет, сколько осталось в пачке и сколько выкурено за всю жизнь.</li>
+                <li><span class="cmd">выпить [класс] [тип]</span> — Умное применение алкоголя. Выбери класс (дорогой/средний/дешевый) и напиток (коньяк/вино/водка). <i>Пример: выпить дорогой коньяк</i>.</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>🎭 РП Команды (Более 50 шт.)</h2>
+            <div class="warn">Писать только в ответ на сообщение пользователя!</div>
+            <ul class="cmd-list">
+                <li>💖 <b>Романтика:</b> обнять, поцеловать, засосать, прижать, муркнуть, кусь, лечь рядом...</li>
+                <li>🔞 <b>Горячее (18+):</b> отшлепать, наказать, связать, доминировать, раздеть...</li>
+                <li>💥 <b>Агрессия:</b> уебать с вертухи, застрелить, кинуть прогибом, взорвать, закопать...</li>
+                <li>🌪 <b>Эпический хаос:</b> сватнуть, подарить вселенную, отправить в космос, бросить в вулкан...</li>
+                <li>🤡 <b>Трэш:</b> обоссать, насрать, скурить, лизнуть розетку...</li>
+                <li>💻 <b>Хакерские:</b> задоксить, задеанонить, ддосить, снести...</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>👑 Панель Создателя</h2>
+            <div class="warn">Работает только в Личных Сообщениях бота!</div>
+            <ul class="cmd-list">
+                <li><span class="cmd">база игроков</span> — Бот соберет всех зарегистрированных пользователей, пронумерует их и скинет тебе секретный .txt файл с их балансами и никами.</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <button class="btn-close" onclick="Telegram.WebApp.close()">🚀 Понятно, закрыть справочник</button>
 
     <script>
-        // Инициализируем Web App
+        // Инициализация
         let tg = window.Telegram.WebApp;
-        
-        // Разворачиваем аппку на весь экран
         tg.expand();
-        
-        // Функция закрытия
-        function closeApp() {
-            tg.close();
-        }
+        tg.ready();
     </script>
 </body>
 </html>
