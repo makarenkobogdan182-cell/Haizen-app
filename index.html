@@ -5,165 +5,223 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        :root {
+            --bg: var(--tg-theme-bg-color, #181818);
+            --text: var(--tg-theme-text-color, #ffffff);
+            --card-bg: var(--tg-theme-secondary-bg-color, #2c2c2c);
+            --btn: var(--tg-theme-button-color, #2481cc);
+            --btn-text: var(--tg-theme-button-text-color, #ffffff);
+            --hint: var(--tg-theme-hint-color, #999999);
+        }
         body {
-            background-color: var(--tg-theme-bg-color, #181818);
-            color: var(--tg-theme-text-color, #ffffff);
+            background-color: var(--bg); color: var(--text);
             font-family: -apple-system, sans-serif;
-            margin: 0; padding: 0;
+            margin: 0; padding: 0; padding-bottom: 30px;
         }
         
+        /* ВСПЛЫВАЮЩИЕ УВЕДОМЛЕНИЯ (ТОСТЫ) */
+        #toast {
+            visibility: hidden; min-width: 250px; background-color: #ff453a;
+            color: #fff; text-align: center; border-radius: 10px; padding: 12px;
+            position: fixed; z-index: 1000; left: 50%; top: 20px;
+            transform: translateX(-50%); font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.3s;
+        }
+        #toast.show { visibility: visible; opacity: 1; }
+        #toast.success { background-color: #34c759; }
+
         /* НАВИГАЦИЯ */
         .tabs {
-            display: flex;
-            background-color: var(--tg-theme-secondary-bg-color, #2c2c2c);
-            padding: 5px;
-            justify-content: space-around;
-            border-bottom: 2px solid var(--tg-theme-button-color, #2481cc);
+            display: flex; background-color: var(--card-bg); padding: 5px;
+            justify-content: space-around; position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
         .tab-btn {
-            background: none; border: none;
-            color: var(--tg-theme-hint-color, #999);
-            font-size: 15px; font-weight: bold;
-            padding: 12px 5px; cursor: pointer;
-            transition: 0.3s;
+            background: none; border: none; color: var(--hint);
+            font-size: 20px; padding: 10px; cursor: pointer; transition: 0.2s;
         }
-        .tab-btn.active {
-            color: var(--tg-theme-button-color, #2481cc);
-            border-bottom: 3px solid var(--tg-theme-button-color, #2481cc);
-        }
+        .tab-btn.active { color: var(--btn); border-bottom: 3px solid var(--btn); }
+        .tab-content { display: none; padding: 15px; animation: fadeIn 0.3s; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        .tab-content { display: none; padding: 15px; }
-        .tab-content.active { display: block; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* ПРОФИЛЬ */
-        .profile-card {
-            background-color: var(--tg-theme-secondary-bg-color, #2c2c2c);
-            border-radius: 15px; padding: 20px; text-align: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3); margin-bottom: 15px;
+        /* ПРОФИЛЬ И КАРТОЧКИ */
+        .card {
+            background-color: var(--card-bg); border-radius: 15px; padding: 15px;
+            margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
-        .avatar { font-size: 60px; margin-bottom: 10px; }
-        .user-name { font-size: 22px; font-weight: bold; margin-bottom: 5px; color: var(--tg-theme-button-color, #2481cc); }
-        .stats { display: flex; justify-content: space-between; margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(128,128,128,0.2); }
-        .stat-box { font-size: 14px; }
-        .stat-val { font-weight: bold; color: #4caf50; font-size: 16px; }
+        .profile-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .avatar { font-size: 50px; }
+        .nick-box { flex-grow: 1; }
+        .nick-title { font-size: 12px; color: var(--btn); font-weight: bold; text-transform: uppercase; }
+        .nick-name { font-size: 20px; font-weight: bold; display: flex; align-items: center; gap: 8px; }
+        .edit-icon { font-size: 16px; cursor: pointer; opacity: 0.7; }
+        .partner { font-size: 13px; color: #ff2d55; margin-top: 3px; }
+        
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .stat-item { background: rgba(128,128,128,0.1); padding: 10px; border-radius: 10px; text-align: center; }
+        .stat-label { font-size: 11px; color: var(--hint); text-transform: uppercase; }
+        .stat-val { font-size: 15px; font-weight: bold; margin-top: 3px; }
+        .val-money { color: #34c759; }
 
         /* ИНПУТЫ И КНОПКИ */
-        .input-group { display: flex; gap: 10px; margin-top: 15px; }
-        input[type="text"], input[type="number"] {
-            flex: 1; padding: 12px; border-radius: 10px; border: none;
-            background-color: var(--tg-theme-bg-color, #181818);
-            color: var(--tg-theme-text-color, #ffffff);
-            border: 1px solid rgba(128,128,128,0.3); font-size: 16px;
+        input {
+            width: 100%; padding: 12px; box-sizing: border-box; border-radius: 10px;
+            border: 1px solid rgba(128,128,128,0.3); background: var(--bg); color: var(--text);
+            font-size: 16px; margin-bottom: 10px; text-align: center;
         }
         .btn {
-            background-color: var(--tg-theme-button-color, #2481cc);
-            color: #fff; border: none; padding: 12px 20px;
-            border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer;
+            background: var(--btn); color: var(--btn-text); border: none;
+            padding: 12px; border-radius: 10px; font-size: 16px; font-weight: bold;
+            width: 100%; cursor: pointer; transition: 0.1s;
         }
-        .btn:active { opacity: 0.8; }
+        .btn:active { transform: scale(0.98); }
 
         /* КАЗИНО */
-        .casino-box {
-            text-align: center; background-color: var(--tg-theme-secondary-bg-color, #2c2c2c);
-            padding: 30px 15px; border-radius: 15px;
+        .casino-display {
+            font-size: 50px; letter-spacing: 10px; text-align: center;
+            background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px; margin: 15px 0;
+            border: 2px solid var(--btn);
         }
-        .slot-machine { font-size: 60px; letter-spacing: 15px; margin: 20px 0; }
-        .casino-status { font-size: 14px; color: var(--tg-theme-hint-color, #999); margin-top: 10px; height: 20px; }
 
-        /* СЕТКА ТОВАРОВ */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .item-card {
-            background-color: var(--tg-theme-secondary-bg-color, #2c2c2c);
-            border-radius: 12px; padding: 12px; text-align: center;
-        }
+        /* МАГАЗИН */
+        .wallet-header { text-align: center; font-size: 18px; font-weight: bold; margin-bottom: 15px; color: #34c759; }
+        .shop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .item-card { background: var(--card-bg); border-radius: 12px; padding: 10px; text-align: center; }
         .item-img { font-size: 40px; margin-bottom: 5px; }
-        .item-name { font-weight: bold; font-size: 13px; }
-        .item-price { color: #4caf50; font-size: 13px; margin: 8px 0; }
-        .buy-btn { width: 100%; padding: 10px; background-color: rgba(36, 129, 204, 0.2); color: var(--tg-theme-button-color, #2481cc); border: 1px solid var(--tg-theme-button-color, #2481cc); border-radius: 8px; font-weight: bold; }
-        
-        /* Заголовок разделов магазина */
-        .shop-title { text-align: center; margin: 20px 0 10px; font-size: 18px; color: var(--tg-theme-hint-color, #999); }
+        .item-name { font-size: 13px; font-weight: bold; height: 35px; }
+        .item-price { color: #34c759; font-size: 13px; margin-bottom: 8px; font-weight: bold; }
+        .btn-buy { background: rgba(36, 129, 204, 0.15); color: var(--btn); border: 1px solid var(--btn); }
+
+        /* СПРАВОЧНИК (АККОРДЕОНЫ) */
+        .accordion {
+            background-color: var(--card-bg); color: var(--text); cursor: pointer;
+            padding: 15px; width: 100%; border: none; text-align: left; outline: none;
+            font-size: 16px; font-weight: bold; border-bottom: 1px solid rgba(128,128,128,0.1);
+            display: flex; justify-content: space-between;
+        }
+        .accordion:after { content: '\002B'; color: var(--btn); font-size: 20px; }
+        .accordion.active:after { content: "\2212"; }
+        .panel { padding: 0 15px; background-color: var(--bg); max-height: 0; overflow: hidden; transition: 0.2s; }
+        .cmd-line { padding: 10px 0; border-bottom: 1px solid rgba(128,128,128,0.1); font-size: 14px; }
+        .cmd-name { color: var(--btn); font-family: monospace; font-weight: bold; }
     </style>
 </head>
 <body>
-
+    
+    <div id="toast">Уведомление</div>
     <div class="tabs">
-        <button class="tab-btn active" onclick="openTab('profile')">👤 Профиль</button>
-        <button class="tab-btn" onclick="openTab('casino')">🎰 Казино</button>
-        <button class="tab-btn" onclick="openTab('shop')">🛒 Магазин</button>
+        <button class="tab-btn active" onclick="openTab('profile')">👤</button>
+        <button class="tab-btn" onclick="openTab('shop')">🛒</button>
+        <button class="tab-btn" onclick="openTab('casino')">🎰</button>
+        <button class="tab-btn" onclick="openTab('help')">📖</button>
     </div>
 
     <div id="profile" class="tab-content active">
-        <div class="profile-card">
-            <div class="avatar">🥷</div>
-            <div class="user-name" id="tg-name">Загрузка...</div>
-            <div style="font-size: 13px; color: #999;">Боец Haizen</div>
-            
-            <div class="stats">
-                <div class="stat-box">Наличные<br><span class="stat-val">В боте 💵</span></div>
-                <div class="stat-box">Банк<br><span class="stat-val">В боте 🏦</span></div>
-                <div class="stat-box">Оружие<br><span class="stat-val">Смотри в чате</span></div>
+        <div class="card">
+            <div class="profile-header">
+                <div class="avatar">🥷</div>
+                <div class="nick-box">
+                    <div class="nick-title">Титул: Бродяга</div>
+                    <div class="nick-name">
+                        <span id="userName">Загрузка...</span> 
+                        <span class="edit-icon" onclick="showNickEditor()">✏️</span>
+                    </div>
+                    <div class="partner">Половинка: В поиске 💔</div>
+                </div>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-item"><div class="stat-label">Наличные</div><div class="stat-val val-money">В боте 💵</div></div>
+                <div class="stat-item"><div class="stat-label">В банке</div><div class="stat-val val-money">В боте 🏦</div></div>
+                <div class="stat-item"><div class="stat-label">Инвентарь</div><div class="stat-val">Пусто</div></div>
+                <div class="stat-item"><div class="stat-label">Оружие</div><div class="stat-val">Кулаки</div></div>
             </div>
         </div>
-
-        <div class="profile-card" style="padding: 15px;">
-            <h3 style="margin: 0 0 10px; font-size: 16px;">Сменить РП Никнейм</h3>
-            <div class="input-group">
-                <input type="text" id="newNick" placeholder="Новый ник...">
-                <button class="btn" onclick="changeNick()">Сменить</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="casino" class="tab-content">
-        <div class="casino-box">
-            <h2 style="margin-top:0;">Рулетка Haizen</h2>
-            <div class="slot-machine" id="slots">❓❓❓</div>
-            
-            <div class="input-group">
-                <input type="number" id="betAmount" placeholder="Сумма ставки...">
-            </div>
-            <button class="btn" style="width: 100%; margin-top: 15px; padding: 15px;" onclick="spinCasino()" id="spinBtn">🎰 КРУТИТЬ (в бот)</button>
-            <div class="casino-status" id="casinoStatus">Испытай удачу!</div>
+        
+        <div class="card" id="editNickCard" style="display: none;">
+            <input type="text" id="newNickInput" placeholder="Введи новый ник...">
+            <button class="btn" onclick="saveNick()">Сохранить ник</button>
         </div>
     </div>
 
     <div id="shop" class="tab-content">
-        <div class="shop-title">🔫 Черный рынок</div>
-        <div class="grid">
-            <div class="item-card">
-                <div class="item-img">🔫</div><div class="item-name">Макаров</div>
-                <div class="item-price">50,000 💵</div><button class="buy-btn" onclick="sendAction('buy_1.2')">Купить</button>
-            </div>
-            <div class="item-card">
-                <div class="item-img">🚀</div><div class="item-name">РПГ-7</div>
-                <div class="item-price">800,000 💵</div><button class="buy-btn" onclick="sendAction('buy_1.6')">Купить</button>
-            </div>
+        <div class="wallet-header">Кошелек: (Смотри в боте) 💵</div>
+        
+        <h3 style="text-align:center; color: var(--hint); margin: 5px 0;">🔫 Черный рынок</h3>
+        <div class="shop-grid">
+            <div class="item-card"><div class="item-img">🔫</div><div class="item-name">Пистолет Макарова</div><div class="item-price">50,000</div><button class="btn btn-buy" onclick="buyItem('1.2', 50000)">Купить</button></div>
+            <div class="item-card"><div class="item-img">🗡️</div><div class="item-name">Керамбит</div><div class="item-price">150,000</div><button class="btn btn-buy" onclick="buyItem('1.3', 150000)">Купить</button></div>
+            <div class="item-card"><div class="item-img">🚀</div><div class="item-name">РПГ-7</div><div class="item-price">800,000</div><button class="btn btn-buy" onclick="buyItem('1.6', 800000)">Купить</button></div>
+            <div class="item-card"><div class="item-img">💣</div><div class="item-name">С4</div><div class="item-price">1,500,000</div><button class="btn btn-buy" onclick="buyItem('1.7', 1500000)">Купить</button></div>
         </div>
 
-        <div class="shop-title">🍷 Бар "У Хайзена"</div>
-        <div class="grid">
-            <div class="item-card">
-                <div class="item-img">🍺</div><div class="item-name">Пиво</div>
-                <div class="item-price">500 💵</div><button class="buy-btn" onclick="sendAction('buy_2.1')">Купить</button>
-            </div>
-            <div class="item-card">
-                <div class="item-img">🍾</div><div class="item-name">Элитный Коньяк</div>
-                <div class="item-price">20,000 💵</div><button class="buy-btn" onclick="sendAction('buy_2.4')">Купить</button>
-            </div>
+        <h3 style="text-align:center; color: var(--hint); margin-top:20px;">🍷 Бар "У Хайзена"</h3>
+        <div class="shop-grid">
+            <div class="item-card"><div class="item-img">🍺</div><div class="item-name">Дешевое Пиво</div><div class="item-price">500</div><button class="btn btn-buy" onclick="buyItem('2.1', 500)">Купить</button></div>
+            <div class="item-card"><div class="item-img">🍷</div><div class="item-name">Вино</div><div class="item-price">5,000</div><button class="btn btn-buy" onclick="buyItem('2.2', 5000)">Купить</button></div>
+            <div class="item-card"><div class="item-img">🍾</div><div class="item-name">Элитный Коньяк</div><div class="item-price">20,000</div><button class="btn btn-buy" onclick="buyItem('2.4', 20000)">Купить</button></div>
+            <div class="item-card"><div class="item-img">🚬</div><div class="item-name">Пачка Винстон</div><div class="item-price">1,000</div><button class="btn btn-buy" onclick="buyItem('1.1', 1000)">Купить</button></div>
         </div>
     </div>
 
+    <div id="casino" class="tab-content">
+        <div class="card" style="text-align:center;">
+            <h2 style="margin-top:5px;">Рулетка Хайзена</h2>
+            <div class="casino-display" id="slots">❓❓❓</div>
+            <input type="number" id="betInput" placeholder="Сумма ставки...">
+            <button class="btn" id="spinBtn" onclick="spinCasino()">🎰 КРУТИТЬ (в чат)</button>
+        </div>
+    </div>
+
+    <div id="help" class="tab-content">
+        <div class="card" style="padding: 0; overflow: hidden;">
+            <button class="accordion">💰 Финансы</button>
+            <div class="panel">
+                <div class="cmd-line"><span class="cmd-name">кошелек</span> - Твой баланс</div>
+                <div class="cmd-line"><span class="cmd-name">банк / б</span> - Счет в банке</div>
+                <div class="cmd-line"><span class="cmd-name">магазин</span> - Открыть прайс</div>
+            </div>
+            
+            <button class="accordion">⚔️ Бои (в ответ)</button>
+            <div class="panel">
+                <div class="cmd-line"><span class="cmd-name">атака [ставка]</span> - Рейд на игрока</div>
+                <div class="cmd-line"><span class="cmd-name">карта [ставка]</span> - Дуэль на картах</div>
+            </div>
+
+            <button class="accordion">🎭 РП Команды</button>
+            <div class="panel" style="padding-bottom: 10px;">
+                <div class="cmd-line">Работают в ответ на сообщение! Пример: обнять, убить, сватнуть.</div>
+                <div class="cmd-line" style="color:var(--hint); font-size: 12px;">Полный список из 50+ команд доступен по команде "хелп" в боте.</div>
+            </div>
+        </div>
+    </div>
     <script>
+        // Инициализируем Телеграм
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        // 1. Магия Телеграма: Получаем реальное имя пользователя!
-        let userName = tg.initDataUnsafe?.user?.first_name || "Неизвестный";
-        document.getElementById("tg-name").innerText = userName;
+        // 1. ДОСТАЕМ ИМЯ ИЗ ТЕЛЕГРАМА
+        let rawName = tg.initDataUnsafe?.user?.first_name || "Неизвестный Боец";
+        document.getElementById("userName").innerText = rawName;
 
-        // Переключение вкладок
+        // 2. УВЕДОМЛЕНИЯ (КРАСНЫЕ И ЗЕЛЕНЫЕ НА 3 СЕК)
+        function showToast(message, isError = true) {
+            let toast = document.getElementById("toast");
+            toast.innerText = message;
+            
+            // Если ошибка - красный, если успех - зеленый
+            if(isError) {
+                toast.classList.remove('success');
+            } else {
+                toast.classList.add('success');
+            }
+            
+            toast.classList.add('show');
+            // Убираем ровно через 3 секунды
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        }
+
+        // 3. ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
         function openTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -171,52 +229,79 @@
             event.currentTarget.classList.add('active');
         }
 
-        // Универсальная отправка команд в бота (закрывает окно)
-        function sendAction(action) {
-            tg.sendData(action);
-            tg.close();
+        // 4. СМЕНА НИКА
+        function showNickEditor() {
+            let card = document.getElementById("editNickCard");
+            card.style.display = card.style.display === "none" ? "block" : "none";
         }
 
-        // Смена ника
-        function changeNick() {
-            let nick = document.getElementById("newNick").value;
-            if(nick.trim() === "") return tg.showAlert("Введи ник!");
-            sendAction("nick_" + nick); // Отправляем в питон: nick_Хайзенберг
+        function saveNick() {
+            let newNick = document.getElementById("newNickInput").value;
+            if(newNick.trim() === "") {
+                return showToast("❌ Введи нормальный ник!");
+            }
+            // Отправляем в бота, но НЕ закрываем окно
+            tg.sendData("nick_" + newNick);
+            document.getElementById("userName").innerText = newNick;
+            document.getElementById("editNickCard").style.display = "none";
+            showToast("✅ Ник изменен! (Бот подтвердит в чате)", false);
         }
 
-        // Анимация Казино
+        // 5. ПОКУПКА В МАГАЗИНЕ
+        function buyItem(itemId, price) {
+            // Отправляем команду покупки в Термукс (Питону)
+            tg.sendData("buy_" + itemId);
+            // Показываем красивое зеленое уведомление
+            showToast("🛒 Запрос отправлен! Смотри ответ бота.", false);
+        }
+
+        // 6. АНИМАЦИЯ КАЗИНО
         const slots = ["🍒", "🍋", "💎", "🔔", "7️⃣", "💀"];
         function spinCasino() {
-            let bet = document.getElementById("betAmount").value;
-            if(bet === "" || bet <= 0) return tg.showAlert("Введи нормальную ставку!");
+            let bet = document.getElementById("betInput").value;
+            if(bet === "" || bet <= 0) {
+                return showToast("❌ Введи нормальную ставку!");
+            }
             
             let btn = document.getElementById("spinBtn");
-            let slotText = document.getElementById("slots");
-            let status = document.getElementById("casinoStatus");
+            let display = document.getElementById("slots");
             
             btn.disabled = true;
             btn.innerText = "Крутится...";
-            status.innerText = "Фортуна решает...";
 
-            // Эффект быстрой прокрутки смайликов
             let spins = 0;
             let timer = setInterval(() => {
                 let r1 = slots[Math.floor(Math.random() * slots.length)];
                 let r2 = slots[Math.floor(Math.random() * slots.length)];
                 let r3 = slots[Math.floor(Math.random() * slots.length)];
-                slotText.innerText = r1 + r2 + r3;
+                display.innerText = r1 + r2 + r3;
                 spins++;
 
-                // Через 15 кадров останавливаем анимацию и отправляем данные в бота
                 if(spins > 15) {
                     clearInterval(timer);
-                    status.innerText = "Отправлено в чат!";
-                    setTimeout(() => {
-                        sendAction("casino_" + bet); // Отправляем в питон: casino_5000
-                    }, 500);
+                    btn.disabled = false;
+                    btn.innerText = "🎰 КРУТИТЬ (в чат)";
+                    
+                    // Отправляем ставку в Питона
+                    tg.sendData("casino_" + bet);
+                    showToast("🎰 Ставка улетела в бота!", false);
                 }
-            }, 100); // Скорость смены смайликов
+            }, 100);
+        }
+
+        // 7. РАСКРЫВАЮЩИЕСЯ СПИСКИ (АККОРДЕОНЫ ДЛЯ ПОМОЩИ)
+        let acc = document.getElementsByClassName("accordion");
+        for (let i = 0; i < acc.length; i++) {
+            acc[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                let panel = this.nextElementSibling;
+                if (panel.style.maxHeight) {
+                    panel.style.maxHeight = null;
+                } else {
+                    panel.style.maxHeight = panel.scrollHeight + "px";
+                }
+            });
         }
     </script>
 </body>
-                    </html>
+</html>
