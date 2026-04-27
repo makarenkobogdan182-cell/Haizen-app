@@ -8,221 +8,215 @@
         body {
             background-color: var(--tg-theme-bg-color, #181818);
             color: var(--tg-theme-text-color, #ffffff);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+            font-family: -apple-system, sans-serif;
+            margin: 0; padding: 0;
         }
-        .header {
-            padding: 20px;
-            text-align: center;
+        
+        /* НАВИГАЦИЯ */
+        .tabs {
+            display: flex;
             background-color: var(--tg-theme-secondary-bg-color, #2c2c2c);
+            padding: 5px;
+            justify-content: space-around;
             border-bottom: 2px solid var(--tg-theme-button-color, #2481cc);
         }
-        .header h1 { margin: 0; font-size: 22px; color: var(--tg-theme-text-color); }
-        .header p { margin: 5px 0 0; font-size: 14px; color: var(--tg-theme-hint-color, #999); }
-        
-        /* Стили для кнопок-аккордеонов */
-        .accordion {
-            background-color: var(--tg-theme-secondary-bg-color, #2c2c2c);
-            color: var(--tg-theme-text-color, #ffffff);
-            cursor: pointer;
-            padding: 15px;
-            width: 100%;
-            border: none;
-            text-align: left;
-            outline: none;
-            font-size: 16px;
-            font-weight: bold;
-            transition: 0.3s;
-            border-bottom: 1px solid rgba(128, 128, 128, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .active, .accordion:hover {
-            background-color: rgba(128, 128, 128, 0.2);
-        }
-        .accordion:after {
-            content: '\002B'; /* Плюсик */
-            color: var(--tg-theme-button-color, #2481cc);
-            font-weight: bold;
-            font-size: 20px;
-        }
-        .active:after {
-            content: "\2212"; /* Минус */
-        }
-        
-        /* Стили для выпадающего контента */
-        .panel {
-            padding: 0 15px;
-            background-color: var(--tg-theme-bg-color, #181818);
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.2s ease-out;
-        }
-        
-        /* Стили для самих команд */
-        .cmd-card {
-            background-color: rgba(128, 128, 128, 0.1);
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 8px;
-            border-left: 4px solid var(--tg-theme-button-color, #2481cc);
-        }
-        .cmd-title {
-            font-family: monospace;
-            font-size: 15px;
-            font-weight: bold;
-            color: var(--tg-theme-button-color, #2481cc);
-        }
-        .cmd-desc {
-            font-size: 14px;
-            margin-top: 5px;
-            line-height: 1.4;
-        }
-        .cmd-usage {
-            font-size: 12px;
+        .tab-btn {
+            background: none; border: none;
             color: var(--tg-theme-hint-color, #999);
-            margin-top: 5px;
-            font-style: italic;
+            font-size: 15px; font-weight: bold;
+            padding: 12px 5px; cursor: pointer;
+            transition: 0.3s;
         }
-        .warn-text {
-            color: #ff453a;
-            font-size: 13px;
-            font-weight: bold;
-            margin: 10px 0;
+        .tab-btn.active {
+            color: var(--tg-theme-button-color, #2481cc);
+            border-bottom: 3px solid var(--tg-theme-button-color, #2481cc);
         }
-        
-        .spacer { height: 80px; }
-        
-        .btn-close {
+
+        .tab-content { display: none; padding: 15px; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* ПРОФИЛЬ */
+        .profile-card {
+            background-color: var(--tg-theme-secondary-bg-color, #2c2c2c);
+            border-radius: 15px; padding: 20px; text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); margin-bottom: 15px;
+        }
+        .avatar { font-size: 60px; margin-bottom: 10px; }
+        .user-name { font-size: 22px; font-weight: bold; margin-bottom: 5px; color: var(--tg-theme-button-color, #2481cc); }
+        .stats { display: flex; justify-content: space-between; margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(128,128,128,0.2); }
+        .stat-box { font-size: 14px; }
+        .stat-val { font-weight: bold; color: #4caf50; font-size: 16px; }
+
+        /* ИНПУТЫ И КНОПКИ */
+        .input-group { display: flex; gap: 10px; margin-top: 15px; }
+        input[type="text"], input[type="number"] {
+            flex: 1; padding: 12px; border-radius: 10px; border: none;
+            background-color: var(--tg-theme-bg-color, #181818);
+            color: var(--tg-theme-text-color, #ffffff);
+            border: 1px solid rgba(128,128,128,0.3); font-size: 16px;
+        }
+        .btn {
             background-color: var(--tg-theme-button-color, #2481cc);
-            color: var(--tg-theme-button-text-color, #ffffff);
-            border: none;
-            padding: 15px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: bold;
-            position: fixed;
-            bottom: 15px;
-            left: 15px;
-            width: calc(100% - 30px);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            color: #fff; border: none; padding: 12px 20px;
+            border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer;
         }
+        .btn:active { opacity: 0.8; }
+
+        /* КАЗИНО */
+        .casino-box {
+            text-align: center; background-color: var(--tg-theme-secondary-bg-color, #2c2c2c);
+            padding: 30px 15px; border-radius: 15px;
+        }
+        .slot-machine { font-size: 60px; letter-spacing: 15px; margin: 20px 0; }
+        .casino-status { font-size: 14px; color: var(--tg-theme-hint-color, #999); margin-top: 10px; height: 20px; }
+
+        /* СЕТКА ТОВАРОВ */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .item-card {
+            background-color: var(--tg-theme-secondary-bg-color, #2c2c2c);
+            border-radius: 12px; padding: 12px; text-align: center;
+        }
+        .item-img { font-size: 40px; margin-bottom: 5px; }
+        .item-name { font-weight: bold; font-size: 13px; }
+        .item-price { color: #4caf50; font-size: 13px; margin: 8px 0; }
+        .buy-btn { width: 100%; padding: 10px; background-color: rgba(36, 129, 204, 0.2); color: var(--tg-theme-button-color, #2481cc); border: 1px solid var(--tg-theme-button-color, #2481cc); border-radius: 8px; font-weight: bold; }
+        
+        /* Заголовок разделов магазина */
+        .shop-title { text-align: center; margin: 20px 0 10px; font-size: 18px; color: var(--tg-theme-hint-color, #999); }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>🤖 База знаний Haizen</h1>
-        <p>Нажимай на разделы, чтобы узнать подробности</p>
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab('profile')">👤 Профиль</button>
+        <button class="tab-btn" onclick="openTab('casino')">🎰 Казино</button>
+        <button class="tab-btn" onclick="openTab('shop')">🛒 Магазин</button>
     </div>
 
-    <button class="accordion">💰 Финансы и Магазин</button>
-    <div class="panel">
-        <div class="cmd-card">
-            <div class="cmd-title">кошелек</div>
-            <div class="cmd-desc">Показывает твой текущий баланс наличных мани.</div>
-            <div class="cmd-usage">Как применять: просто напиши в чат.</div>
+    <div id="profile" class="tab-content active">
+        <div class="profile-card">
+            <div class="avatar">🥷</div>
+            <div class="user-name" id="tg-name">Загрузка...</div>
+            <div style="font-size: 13px; color: #999;">Боец Haizen</div>
+            
+            <div class="stats">
+                <div class="stat-box">Наличные<br><span class="stat-val">В боте 💵</span></div>
+                <div class="stat-box">Банк<br><span class="stat-val">В боте 🏦</span></div>
+                <div class="stat-box">Оружие<br><span class="stat-val">Смотри в чате</span></div>
+            </div>
         </div>
-        <div class="cmd-card">
-            <div class="cmd-title">банк (или б)</div>
-            <div class="cmd-desc">Проверка банковского счета. Деньги в банке нельзя украсть при нападении!</div>
-            <div class="cmd-usage">Команды внутри: "депозит [сумма]" положить, "снять [сумма]" забрать.</div>
-        </div>
-        <div class="cmd-card">
-            <div class="cmd-title">магазин</div>
-            <div class="cmd-desc">Открывает прайс-лист на оружие, выпивку и сигареты.</div>
-        </div>
-        <div class="cmd-card">
-            <div class="cmd-title">купить [ID]</div>
-            <div class="cmd-desc">Покупка предмета. ID можно посмотреть в магазине.</div>
-            <div class="cmd-usage">Пример: "купить 1.1" (купить сигареты).</div>
-        </div>
-    </div>
 
-    <button class="accordion">⚔️ Бои и Игры (В ответ!)</button>
-    <div class="panel">
-        <div class="warn-text">ВАЖНО: Эти команды нужно писать только В ОТВЕТ на сообщение другого игрока!</div>
-        <div class="cmd-card">
-            <div class="cmd-title">атака [ставка]</div>
-            <div class="cmd-desc">Рейд на игрока! Бот сам достанет твое самое дорогое оружие из инвентаря. У кого пушка круче — у того больше шансов забрать ставку.</div>
-            <div class="cmd-usage">Пример в ответ: "атака 5000". Внимание: оружие может сломаться с шансом 15%!</div>
-        </div>
-        <div class="cmd-card">
-            <div class="cmd-title">карта [ставка]</div>
-            <div class="cmd-desc">Вызов на карточную дуэль. Бот выдаст инлайн-кнопки для согласия или отказа.</div>
-            <div class="cmd-usage">Пример в ответ: "карта 1000".</div>
+        <div class="profile-card" style="padding: 15px;">
+            <h3 style="margin: 0 0 10px; font-size: 16px;">Сменить РП Никнейм</h3>
+            <div class="input-group">
+                <input type="text" id="newNick" placeholder="Новый ник...">
+                <button class="btn" onclick="changeNick()">Сменить</button>
+            </div>
         </div>
     </div>
 
-    <button class="accordion">🍷 Инвентарь и Отдых</button>
-    <div class="panel">
-        <div class="cmd-card">
-            <div class="cmd-title">пфф</div>
-            <div class="cmd-desc">Выкурить сигарету. Показывает остаток в пачке и общий счетчик курения за всю жизнь. Ник становится кликабельным!</div>
-        </div>
-        <div class="cmd-card">
-            <div class="cmd-title">выпить [класс] [тип]</div>
-            <div class="cmd-desc">Бот найдет в твоем инвентаре нужную бутылку и применит ее. Классы: дорогой, средний, дешевый.</div>
-            <div class="cmd-usage">Пример: "выпить дорогой коньяк" или "выпить дешевую водку".</div>
-        </div>
-    </div>
-
-    <button class="accordion">🎭 РП Команды (Ответ на смс)</button>
-    <div class="panel">
-        <div class="warn-text">Все РП команды пишутся В ОТВЕТ на сообщение!</div>
-        <div class="cmd-card">
-            <div class="cmd-title">💖 Романтика</div>
-            <div class="cmd-desc">обнять, поцеловать, засосать, прижать, погладить, чмокнуть, муркнуть, укутать, согреть, потискать, приласкать, влюбиться, жениться, сделать массаж, понюхать, лечь рядом, держать за руку, кусь.</div>
-        </div>
-        <div class="cmd-card">
-            <div class="cmd-title">💥 Агрессия и Драки</div>
-            <div class="cmd-desc">сжечь, убить, уебать, уебать с вертухи, уебать в челюсть, ударить, пнуть, зарезать, застрелить, утопить, задушить, отравить, взорвать, закопать, расстрелять, избить, уничтожить, сломать, кинуть прогибом, дать леща, дать пощечину, послать, унизить.</div>
-        </div>
-        <div class="cmd-card">
-            <div class="cmd-title">🌪 Хаос и Трэш</div>
-            <div class="cmd-desc">сватнуть, подарить вселенную, вызвать на дуэль, отправить в космос, украсть сердце, облить шампанским, закидать помидорами, дать корону, сделать рабом, выпороть, бросить в вулкан, гавкнуть, хрюкнуть, станцевать гопак, упасть в обморок, скурить, подавиться, лизнуть розетку, удариться головой, закосплеить, укусить за жопу, обоссать, насрать.</div>
-        </div>
-        <div class="cmd-card">
-            <div class="cmd-title">🔞 Горячее (18+)</div>
-            <div class="cmd-desc">трахнуть, отшлепать, шлепнуть, раздеть, связать, наказать, доминировать, лапать, возбудить, лизнуть, отдаться, приставать, укусить за шею.</div>
-        </div>
-        <div class="cmd-card">
-            <div class="cmd-title">💻 Хакерские</div>
-            <div class="cmd-desc">задоксить, снести, задеанонить, взломать, забанить, ддосить, завирусить, отформатировать.</div>
+    <div id="casino" class="tab-content">
+        <div class="casino-box">
+            <h2 style="margin-top:0;">Рулетка Haizen</h2>
+            <div class="slot-machine" id="slots">❓❓❓</div>
+            
+            <div class="input-group">
+                <input type="number" id="betAmount" placeholder="Сумма ставки...">
+            </div>
+            <button class="btn" style="width: 100%; margin-top: 15px; padding: 15px;" onclick="spinCasino()" id="spinBtn">🎰 КРУТИТЬ (в бот)</button>
+            <div class="casino-status" id="casinoStatus">Испытай удачу!</div>
         </div>
     </div>
 
-    <button class="accordion">👑 Для Админа (В ЛС бота)</button>
-    <div class="panel">
-        <div class="cmd-card">
-            <div class="cmd-title">база игроков</div>
-            <div class="cmd-desc">Скачать полный лог-файл (TXT) всех пользователей, их ников и балансов. Работает только в личных сообщениях с ботом!</div>
+    <div id="shop" class="tab-content">
+        <div class="shop-title">🔫 Черный рынок</div>
+        <div class="grid">
+            <div class="item-card">
+                <div class="item-img">🔫</div><div class="item-name">Макаров</div>
+                <div class="item-price">50,000 💵</div><button class="buy-btn" onclick="sendAction('buy_1.2')">Купить</button>
+            </div>
+            <div class="item-card">
+                <div class="item-img">🚀</div><div class="item-name">РПГ-7</div>
+                <div class="item-price">800,000 💵</div><button class="buy-btn" onclick="sendAction('buy_1.6')">Купить</button>
+            </div>
+        </div>
+
+        <div class="shop-title">🍷 Бар "У Хайзена"</div>
+        <div class="grid">
+            <div class="item-card">
+                <div class="item-img">🍺</div><div class="item-name">Пиво</div>
+                <div class="item-price">500 💵</div><button class="buy-btn" onclick="sendAction('buy_2.1')">Купить</button>
+            </div>
+            <div class="item-card">
+                <div class="item-img">🍾</div><div class="item-name">Элитный Коньяк</div>
+                <div class="item-price">20,000 💵</div><button class="buy-btn" onclick="sendAction('buy_2.4')">Купить</button>
+            </div>
         </div>
     </div>
-
-    <div class="spacer"></div>
-    <button class="btn-close" onclick="Telegram.WebApp.close()">🚀 Закрыть и играть!</button>
 
     <script>
-        // Анимация для выпадающих списков
-        var acc = document.getElementsByClassName("accordion");
-        for (var i = 0; i < acc.length; i++) {
-            acc[i].addEventListener("click", function() {
-                this.classList.toggle("active");
-                var panel = this.nextElementSibling;
-                if (panel.style.maxHeight) {
-                    panel.style.maxHeight = null;
-                } else {
-                    panel.style.maxHeight = panel.scrollHeight + "px";
-                }
-            });
-        }
-
-        // Запуск Telegram Web App
         let tg = window.Telegram.WebApp;
         tg.expand();
+
+        // 1. Магия Телеграма: Получаем реальное имя пользователя!
+        let userName = tg.initDataUnsafe?.user?.first_name || "Неизвестный";
+        document.getElementById("tg-name").innerText = userName;
+
+        // Переключение вкладок
+        function openTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // Универсальная отправка команд в бота (закрывает окно)
+        function sendAction(action) {
+            tg.sendData(action);
+            tg.close();
+        }
+
+        // Смена ника
+        function changeNick() {
+            let nick = document.getElementById("newNick").value;
+            if(nick.trim() === "") return tg.showAlert("Введи ник!");
+            sendAction("nick_" + nick); // Отправляем в питон: nick_Хайзенберг
+        }
+
+        // Анимация Казино
+        const slots = ["🍒", "🍋", "💎", "🔔", "7️⃣", "💀"];
+        function spinCasino() {
+            let bet = document.getElementById("betAmount").value;
+            if(bet === "" || bet <= 0) return tg.showAlert("Введи нормальную ставку!");
+            
+            let btn = document.getElementById("spinBtn");
+            let slotText = document.getElementById("slots");
+            let status = document.getElementById("casinoStatus");
+            
+            btn.disabled = true;
+            btn.innerText = "Крутится...";
+            status.innerText = "Фортуна решает...";
+
+            // Эффект быстрой прокрутки смайликов
+            let spins = 0;
+            let timer = setInterval(() => {
+                let r1 = slots[Math.floor(Math.random() * slots.length)];
+                let r2 = slots[Math.floor(Math.random() * slots.length)];
+                let r3 = slots[Math.floor(Math.random() * slots.length)];
+                slotText.innerText = r1 + r2 + r3;
+                spins++;
+
+                // Через 15 кадров останавливаем анимацию и отправляем данные в бота
+                if(spins > 15) {
+                    clearInterval(timer);
+                    status.innerText = "Отправлено в чат!";
+                    setTimeout(() => {
+                        sendAction("casino_" + bet); // Отправляем в питон: casino_5000
+                    }, 500);
+                }
+            }, 100); // Скорость смены смайликов
+        }
     </script>
 </body>
-                                                                                                                               </html>
+                    </html>
