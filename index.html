@@ -12,296 +12,326 @@
             --btn: var(--tg-theme-button-color, #2481cc);
             --btn-text: var(--tg-theme-button-text-color, #ffffff);
             --hint: var(--tg-theme-hint-color, #999999);
+            --accent: #34c759;
+            --danger: #ff453a;
         }
         body {
             background-color: var(--bg); color: var(--text);
             font-family: -apple-system, sans-serif;
             margin: 0; padding: 0; padding-bottom: 30px;
         }
-        
-        /* ВСПЛЫВАЮЩИЕ УВЕДОМЛЕНИЯ (ТОСТЫ) */
-        #toast {
-            visibility: hidden; min-width: 250px; background-color: #ff453a;
-            color: #fff; text-align: center; border-radius: 10px; padding: 12px;
-            position: fixed; z-index: 1000; left: 50%; top: 20px;
-            transform: translateX(-50%); font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.3s;
-        }
-        #toast.show { visibility: visible; opacity: 1; }
-        #toast.success { background-color: #34c759; }
 
-        /* НАВИГАЦИЯ */
+        /* ШАПКА И НАВИГАЦИЯ */
+        .header {
+            text-align: center; padding: 15px; font-size: 20px; font-weight: 900;
+            background: var(--card-bg); border-bottom: 1px solid rgba(128,128,128,0.2);
+            color: var(--btn);
+        }
         .tabs {
             display: flex; background-color: var(--card-bg); padding: 5px;
             justify-content: space-around; position: sticky; top: 0; z-index: 100;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
         .tab-btn {
             background: none; border: none; color: var(--hint);
-            font-size: 20px; padding: 10px; cursor: pointer; transition: 0.2s;
+            font-size: 13px; font-weight: bold; padding: 12px 5px; cursor: pointer;
+            transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 5px;
         }
+        .tab-btn span { font-size: 20px; }
         .tab-btn.active { color: var(--btn); border-bottom: 3px solid var(--btn); }
+
+        /* КОНТЕНТ */
         .tab-content { display: none; padding: 15px; animation: fadeIn 0.3s; }
         .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ПРОФИЛЬ И КАРТОЧКИ */
-        .card {
-            background-color: var(--card-bg); border-radius: 15px; padding: 15px;
-            margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        /* КАРТОЧКИ КОМАНД */
+        .cmd-group { margin-bottom: 25px; }
+        .cmd-group-title {
+            font-size: 18px; font-weight: 900; color: var(--btn);
+            margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+            border-bottom: 2px solid rgba(128,128,128,0.2); padding-bottom: 8px;
         }
-        .profile-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
-        .avatar { font-size: 50px; }
-        .nick-box { flex-grow: 1; }
-        .nick-title { font-size: 12px; color: var(--btn); font-weight: bold; text-transform: uppercase; }
-        .nick-name { font-size: 20px; font-weight: bold; display: flex; align-items: center; gap: 8px; }
-        .edit-icon { font-size: 16px; cursor: pointer; opacity: 0.7; }
-        .partner { font-size: 13px; color: #ff2d55; margin-top: 3px; }
-        
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .stat-item { background: rgba(128,128,128,0.1); padding: 10px; border-radius: 10px; text-align: center; }
-        .stat-label { font-size: 11px; color: var(--hint); text-transform: uppercase; }
-        .stat-val { font-size: 15px; font-weight: bold; margin-top: 3px; }
-        .val-money { color: #34c759; }
+        .cmd-card {
+            background: var(--card-bg); border-radius: 12px; padding: 15px;
+            margin-bottom: 10px; border-left: 4px solid var(--btn);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .cmd-trigger {
+            font-family: monospace; font-size: 16px; font-weight: bold;
+            background: rgba(128,128,128,0.15); padding: 4px 8px; border-radius: 6px;
+            color: var(--accent); display: inline-block; margin-bottom: 8px;
+        }
+        .cmd-desc { font-size: 14px; line-height: 1.5; }
+        .cmd-example {
+            font-size: 13px; color: var(--hint); margin-top: 8px;
+            font-style: italic; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 6px;
+        }
+        .warn { color: var(--danger); font-weight: bold; font-size: 13px; margin-bottom: 10px; }
 
-        /* ИНПУТЫ И КНОПКИ */
-        input {
-            width: 100%; padding: 12px; box-sizing: border-box; border-radius: 10px;
-            border: 1px solid rgba(128,128,128,0.3); background: var(--bg); color: var(--text);
-            font-size: 16px; margin-bottom: 10px; text-align: center;
+        /* СПЕЦИАЛЬНО ДЛЯ РП КОМАНД */
+        .rp-item {
+            background: var(--card-bg); padding: 10px 15px; border-radius: 10px;
+            margin-bottom: 8px; display: flex; flex-direction: column; gap: 4px;
         }
-        .btn {
-            background: var(--btn); color: var(--btn-text); border: none;
-            padding: 12px; border-radius: 10px; font-size: 16px; font-weight: bold;
-            width: 100%; cursor: pointer; transition: 0.1s;
-        }
-        .btn:active { transform: scale(0.98); }
-
-        /* КАЗИНО */
-        .casino-display {
-            font-size: 50px; letter-spacing: 10px; text-align: center;
-            background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px; margin: 15px 0;
-            border: 2px solid var(--btn);
-        }
-
-        /* МАГАЗИН */
-        .wallet-header { text-align: center; font-size: 18px; font-weight: bold; margin-bottom: 15px; color: #34c759; }
-        .shop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .item-card { background: var(--card-bg); border-radius: 12px; padding: 10px; text-align: center; }
-        .item-img { font-size: 40px; margin-bottom: 5px; }
-        .item-name { font-size: 13px; font-weight: bold; height: 35px; }
-        .item-price { color: #34c759; font-size: 13px; margin-bottom: 8px; font-weight: bold; }
-        .btn-buy { background: rgba(36, 129, 204, 0.15); color: var(--btn); border: 1px solid var(--btn); }
-
-        /* СПРАВОЧНИК (АККОРДЕОНЫ) */
-        .accordion {
-            background-color: var(--card-bg); color: var(--text); cursor: pointer;
-            padding: 15px; width: 100%; border: none; text-align: left; outline: none;
-            font-size: 16px; font-weight: bold; border-bottom: 1px solid rgba(128,128,128,0.1);
-            display: flex; justify-content: space-between;
-        }
-        .accordion:after { content: '\002B'; color: var(--btn); font-size: 20px; }
-        .accordion.active:after { content: "\2212"; }
-        .panel { padding: 0 15px; background-color: var(--bg); max-height: 0; overflow: hidden; transition: 0.2s; }
-        .cmd-line { padding: 10px 0; border-bottom: 1px solid rgba(128,128,128,0.1); font-size: 14px; }
-        .cmd-name { color: var(--btn); font-family: monospace; font-weight: bold; }
+        .rp-word { font-weight: bold; color: var(--btn); font-size: 15px; }
+        .rp-action { font-size: 13px; color: var(--hint); }
     </style>
 </head>
 <body>
-    
-    <div id="toast">Уведомление</div>
+
+    <div class="header">📚 Энциклопедия Haizen</div>
+
     <div class="tabs">
-        <button class="tab-btn active" onclick="openTab('profile')">👤</button>
-        <button class="tab-btn" onclick="openTab('shop')">🛒</button>
-        <button class="tab-btn" onclick="openTab('casino')">🎰</button>
-        <button class="tab-btn" onclick="openTab('help')">📖</button>
+        <button class="tab-btn active" onclick="openTab('profile')"><span>👤</span>Профиль</button>
+        <button class="tab-btn" onclick="openTab('games')"><span>🎮</span>Игры</button>
+        <button class="tab-btn" onclick="openTab('earn')"><span>💰</span>Заработок</button>
+        <button class="tab-btn" onclick="openTab('rp')"><span>🎭</span>РП Команды</button>
     </div>
 
     <div id="profile" class="tab-content active">
-        <div class="card">
-            <div class="profile-header">
-                <div class="avatar">🥷</div>
-                <div class="nick-box">
-                    <div class="nick-title">Титул: Бродяга</div>
-                    <div class="nick-name">
-                        <span id="userName">Загрузка...</span> 
-                        <span class="edit-icon" onclick="showNickEditor()">✏️</span>
-                    </div>
-                    <div class="partner">Половинка: В поиске 💔</div>
-                </div>
-            </div>
-            <div class="stats-grid">
-                <div class="stat-item"><div class="stat-label">Наличные</div><div class="stat-val val-money">В боте 💵</div></div>
-                <div class="stat-item"><div class="stat-label">В банке</div><div class="stat-val val-money">В боте 🏦</div></div>
-                <div class="stat-item"><div class="stat-label">Инвентарь</div><div class="stat-val">Пусто</div></div>
-                <div class="stat-item"><div class="stat-label">Оружие</div><div class="stat-val">Кулаки</div></div>
-            </div>
-        </div>
+        <div class="warn">💡 Эти команды покажут информацию о тебе и других игроках.</div>
         
-        <div class="card" id="editNickCard" style="display: none;">
-            <input type="text" id="newNickInput" placeholder="Введи новый ник...">
-            <button class="btn" onclick="saveNick()">Сохранить ник</button>
+        <div class="cmd-card">
+            <div class="cmd-trigger">!я</div>
+            <div class="cmd-desc">Показывает твой полный профиль: никнейм, титул, баланс наличных, счет в банке, половинку и содержимое инвентаря.</div>
+            <div class="cmd-example">Просто напиши: !я</div>
+        </div>
+
+        <div class="cmd-card">
+            <div class="cmd-trigger">!ты</div>
+            <div class="cmd-desc">Показывает чужой профиль и статистику пользователя.</div>
+            <div class="cmd-example">Напиши В ОТВЕТ на сообщение игрока: !ты</div>
+        </div>
+
+        <div class="cmd-card">
+            <div class="cmd-trigger">/добавить</div>
+            <div class="cmd-desc">Предлагает другому игроку стать твоей половинкой. Если он согласится, вы появитесь друг у друга в профиле!</div>
+            <div class="cmd-example">Напиши В ОТВЕТ на сообщение игрока: /добавить</div>
         </div>
     </div>
 
-    <div id="shop" class="tab-content">
-        <div class="wallet-header">Кошелек: (Смотри в боте) 💵</div>
-        
-        <h3 style="text-align:center; color: var(--hint); margin: 5px 0;">🔫 Черный рынок</h3>
-        <div class="shop-grid">
-            <div class="item-card"><div class="item-img">🔫</div><div class="item-name">Пистолет Макарова</div><div class="item-price">50,000</div><button class="btn btn-buy" onclick="buyItem('1.2', 50000)">Купить</button></div>
-            <div class="item-card"><div class="item-img">🗡️</div><div class="item-name">Керамбит</div><div class="item-price">150,000</div><button class="btn btn-buy" onclick="buyItem('1.3', 150000)">Купить</button></div>
-            <div class="item-card"><div class="item-img">🚀</div><div class="item-name">РПГ-7</div><div class="item-price">800,000</div><button class="btn btn-buy" onclick="buyItem('1.6', 800000)">Купить</button></div>
-            <div class="item-card"><div class="item-img">💣</div><div class="item-name">С4</div><div class="item-price">1,500,000</div><button class="btn btn-buy" onclick="buyItem('1.7', 1500000)">Купить</button></div>
+    <div id="games" class="tab-content">
+        <div class="warn">⚠️ ВАЖНО: Все боевые команды пишутся только В ОТВЕТ на сообщение жертвы!</div>
+
+        <div class="cmd-card">
+            <div class="cmd-trigger">атака [ставка]</div>
+            <div class="cmd-desc">Вооруженный рейд на игрока. Бот автоматически достанет твое самое мощное оружие из инвентаря. Чем дороже пушка, тем больше шанс победить и забрать ставку!</div>
+            <div class="cmd-example">Пример в ответ: атака 5000<br>(Оружие может сломаться с шансом 15%)</div>
         </div>
 
-        <h3 style="text-align:center; color: var(--hint); margin-top:20px;">🍷 Бар "У Хайзена"</h3>
-        <div class="shop-grid">
-            <div class="item-card"><div class="item-img">🍺</div><div class="item-name">Дешевое Пиво</div><div class="item-price">500</div><button class="btn btn-buy" onclick="buyItem('2.1', 500)">Купить</button></div>
-            <div class="item-card"><div class="item-img">🍷</div><div class="item-name">Вино</div><div class="item-price">5,000</div><button class="btn btn-buy" onclick="buyItem('2.2', 5000)">Купить</button></div>
-            <div class="item-card"><div class="item-img">🍾</div><div class="item-name">Элитный Коньяк</div><div class="item-price">20,000</div><button class="btn btn-buy" onclick="buyItem('2.4', 20000)">Купить</button></div>
-            <div class="item-card"><div class="item-img">🚬</div><div class="item-name">Пачка Винстон</div><div class="item-price">1,000</div><button class="btn btn-buy" onclick="buyItem('1.1', 1000)">Купить</button></div>
+        <div class="cmd-card">
+            <div class="cmd-trigger">карта [ставка]</div>
+            <div class="cmd-desc">Мирная дуэль в карты. Бот предложит игроку принять вызов инлайн-кнопкой. У кого выпадает карта старше — тот забирает весь банк.</div>
+            <div class="cmd-example">Пример в ответ: карта 1000</div>
         </div>
     </div>
 
-    <div id="casino" class="tab-content">
-        <div class="card" style="text-align:center;">
-            <h2 style="margin-top:5px;">Рулетка Хайзена</h2>
-            <div class="casino-display" id="slots">❓❓❓</div>
-            <input type="number" id="betInput" placeholder="Сумма ставки...">
-            <button class="btn" id="spinBtn" onclick="spinCasino()">🎰 КРУТИТЬ (в чат)</button>
+    <div id="earn" class="tab-content">
+        <div class="cmd-card">
+            <div class="cmd-trigger">работа</div>
+            <div class="cmd-desc">Отправляет тебя на подработку, где можно получить немного стартовых наличных мани.</div>
+        </div>
+
+        <div class="cmd-card">
+            <div class="cmd-trigger">кошелек</div>
+            <div class="cmd-desc">Быстрая проверка количества наличных денег в кармане.</div>
+        </div>
+
+        <div class="cmd-card">
+            <div class="cmd-trigger">банк / б</div>
+            <div class="cmd-desc">Вызывает меню банка. Деньги на счету защищены от нападений других игроков!</div>
+            <div class="cmd-example">Команды банка:<br>депозит [сумма] - положить на счет<br>снять [сумма] - забрать наличные</div>
+        </div>
+
+        <div class="cmd-card">
+            <div class="cmd-trigger">магазин</div>
+            <div class="cmd-desc">Открывает витрину черного рынка с оружием, алкоголем и сигаретами. В магазине указаны цены и ID каждого товара.</div>
+        </div>
+
+        <div class="cmd-card">
+            <div class="cmd-trigger">купить [ID]</div>
+            <div class="cmd-desc">Покупка предмета. Деньги списываются из кошелька, а предмет падает в инвентарь.</div>
+            <div class="cmd-example">Пример: купить 1.2 (Купит Пистолет Макарова)</div>
         </div>
     </div>
+    <div id="rp" class="tab-content">
+        <div class="warn">🔥 Напиши любую из этих команд В ОТВЕТ на сообщение другого игрока, чтобы действие сработало!</div>
 
-    <div id="help" class="tab-content">
-        <div class="card" style="padding: 0; overflow: hidden;">
-            <button class="accordion">💰 Финансы</button>
-            <div class="panel">
-                <div class="cmd-line"><span class="cmd-name">кошелек</span> - Твой баланс</div>
-                <div class="cmd-line"><span class="cmd-name">банк / б</span> - Счет в банке</div>
-                <div class="cmd-line"><span class="cmd-name">магазин</span> - Открыть прайс</div>
-            </div>
-            
-            <button class="accordion">⚔️ Бои (в ответ)</button>
-            <div class="panel">
-                <div class="cmd-line"><span class="cmd-name">атака [ставка]</span> - Рейд на игрока</div>
-                <div class="cmd-line"><span class="cmd-name">карта [ставка]</span> - Дуэль на картах</div>
-            </div>
-
-            <button class="accordion">🎭 РП Команды</button>
-            <div class="panel" style="padding-bottom: 10px;">
-                <div class="cmd-line">Работают в ответ на сообщение! Пример: обнять, убить, сватнуть.</div>
-                <div class="cmd-line" style="color:var(--hint); font-size: 12px;">Полный список из 50+ команд доступен по команде "хелп" в боте.</div>
-            </div>
+        <div class="cmd-group">
+            <div class="cmd-group-title">💖 Романтика и Любовь</div>
+            <div class="rp-item"><span class="rp-word">обнять</span><span class="rp-action">[Твой ник] обнял(а) [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">поцеловать</span><span class="rp-action">[Твой ник] поцеловал(а) [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">засосать</span><span class="rp-action">[Твой ник] страстно засосал(а) [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">прижать</span><span class="rp-action">[Твой ник] крепко прижал(а) к себе [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">погладить</span><span class="rp-action">[Твой ник] нежно погладил(а) [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">кусь</span><span class="rp-action">[Твой ник] сделал(а) милый кусь [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">муркнуть</span><span class="rp-action">[Твой ник] ласково муркнул(а) для [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">сделать массаж</span><span class="rp-action">[Твой ник] сделал(а) расслабляющий массаж [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">лечь рядом</span><span class="rp-action">[Твой ник] лег(ла) рядом с [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">понюхать</span><span class="rp-action">[Твой ник] понюхал(а) волосы [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">держать за руку</span><span class="rp-action">[Твой ник] взял(а) за руку [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">согреть</span><span class="rp-action">[Твой ник] согрел(а) в своих объятиях [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">укутать</span><span class="rp-action">[Твой ник] заботливо укутал(а) в плед [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">чмокнуть</span><span class="rp-action">[Твой ник] чмокнул(а) в щечку [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">влюбиться</span><span class="rp-action">[Твой ник] по уши влюбился(ась) в [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">ласкать</span><span class="rp-action">[Твой ник] начал(а) нежно ласкать [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">заигрывать</span><span class="rp-action">[Твой ник] начал(а) заигрывать с [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">подмигнуть</span><span class="rp-action">[Твой ник] игриво подмигнул(а) [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">шепнуть</span><span class="rp-action">[Твой ник] прошептал(а) на ушко [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">в шею</span><span class="rp-action">[Твой ник] поцеловал(а) в шею [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">в лоб</span><span class="rp-action">[Твой ник] поцеловал(а) в лоб [Его ник]</span></div>
         </div>
+
+        <div class="cmd-group">
+            <div class="cmd-group-title">🤝 Дружба и Поддержка</div>
+            <div class="rp-item"><span class="rp-word">дать пять</span><span class="rp-action">[Твой ник] дал(а) пять [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">похлопать</span><span class="rp-action">[Твой ник] похлопал(а) по плечу [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">поздороваться</span><span class="rp-action">[Твой ник] радостно поздоровался(ась) с [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">улыбнуться</span><span class="rp-action">[Твой ник] тепло улыбнулся(ась) [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">помахать</span><span class="rp-action">[Твой ник] помахал(а) рукой [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">пожать руку</span><span class="rp-action">[Твой ник] пожал(а) руку [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">похвалить</span><span class="rp-action">[Твой ник] похвалил(а) за старания [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">подбодрить</span><span class="rp-action">[Твой ник] решил(а) подбодрить [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">успокоить</span><span class="rp-action">[Твой ник] попытался(ась) успокоить [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">угостить</span><span class="rp-action">[Твой ник] угостил(а) вкусняшкой [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">накормить</span><span class="rp-action">[Твой ник] сытно накормил(а) [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">напоить</span><span class="rp-action">[Твой ник] напоил(а) чаем [Его ник]</span></div>
+        </div>
+
+        <div class="cmd-group">
+            <div class="cmd-group-title">🎭 Эмоции</div>
+            <div class="rp-item"><span class="rp-word">заплакать</span><span class="rp-action">[Твой ник] горько заплакал(а) на плече у [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">рассмеяться</span><span class="rp-action">[Твой ник] громко рассмеялся(ась) из-за [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">смутиться</span><span class="rp-action">[Твой ник] покраснел(а) и смутился(ась) из-за [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">испугаться</span><span class="rp-action">[Твой ник] сильно испугался(ась) [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">разозлиться</span><span class="rp-action">[Твой ник] сильно разозлился(ась) на [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">обидеться</span><span class="rp-action">[Твой ник] надул(а) губки и обиделся(ась) на [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">простить</span><span class="rp-action">[Твой ник] великодушно простил(а) [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">поблагодарить</span><span class="rp-action">[Твой ник] от всей души поблагодарил(а) [Его ник]</span></div>
+                                                                          </div>
+        <div class="cmd-group">
+            <div class="cmd-group-title">🔞 Горячее (18+)</div>
+            <div class="rp-item"><span class="rp-word">выебать</span><span class="rp-action">[Твой ник] жестко выебал(а) [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">трахнуть</span><span class="rp-action">[Твой ник] страстно трахнул(а) [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">отшлепать</span><span class="rp-action">[Твой ник] звонко отшлепал(а) по попке [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">раздеть</span><span class="rp-action">[Твой ник] медленно раздел(а) [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">связать</span><span class="rp-action">[Твой ник] крепко связал(а) [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">доминировать</span><span class="rp-action">[Твой ник] полностью доминирует над [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">наказать</span><span class="rp-action">[Твой ник] сурово наказал(а) в постели [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">шлепнуть</span><span class="rp-action">[Твой ник] игриво шлепнул(а) [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">лапать</span><span class="rp-action">[Твой ник] начал(а) бесстыдно лапать [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">возбудить</span><span class="rp-action">[Твой ник] довел(а) до пика возбуждения [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">лизнуть</span><span class="rp-action">[Твой ник] пошло лизнул(а) [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">отдаться</span><span class="rp-action">[Твой ник] полностью отдался(ась) [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">приставать</span><span class="rp-action">[Твой ник] начал(а) грязно приставать к [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">укусить за шею</span><span class="rp-action">[Твой ник] страстно укусил(а) за шею [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">стонать</span><span class="rp-action">[Твой ник] сладко застонал(а) из-за [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">приковать</span><span class="rp-action">[Твой ник] приковал(а) наручниками к кровати [Его ник]</span></div>
+        </div>
+
+        <div class="cmd-group">
+            <div class="cmd-group-title">💥 Агрессия и Драки</div>
+            <div class="rp-item"><span class="rp-word">уебать</span><span class="rp-action">[Твой ник] со всей силы уебал(а) [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">уебать с вертухи</span><span class="rp-action">[Твой ник] красиво уебал(а) с вертухи [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">в челюсть</span><span class="rp-action">[Твой ник] прописал(а) в челюсть [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">убить</span><span class="rp-action">[Твой ник] безжалостно убил(а) [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">застрелить</span><span class="rp-action">[Твой ник] выпустил(а) обойму в [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">кинуть прогибом</span><span class="rp-action">[Твой ник] эпично кинул(а) прогибом [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">взорвать</span><span class="rp-action">[Твой ник] подорвал(а) на мине [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">закопать</span><span class="rp-action">[Твой ник] закопал(а) живьем в лесу [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">ударить</span><span class="rp-action">[Твой ник] сильно ударил(а) [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">пнуть</span><span class="rp-action">[Твой ник] пнул(а) под дых [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">зарезать</span><span class="rp-action">[Твой ник] порезал(а) ножом [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">утопить</span><span class="rp-action">[Твой ник] утопил(а) в унитазе [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">задушить</span><span class="rp-action">[Твой ник] хладнокровно задушил(а) [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">отравить</span><span class="rp-action">[Твой ник] подсыпал(а) яд в чай [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">расстрелять</span><span class="rp-action">[Твой ник] расстрелял(а) из пулемета [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">избить</span><span class="rp-action">[Твой ник] жестоко избил(а) толпой [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">уничтожить</span><span class="rp-action">[Твой ник] стер(ла) с лица земли [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">сломать</span><span class="rp-action">[Твой ник] переломал(а) все кости [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">дать леща</span><span class="rp-action">[Твой ник] отвесил(а) звонкого леща [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">дать пощечину</span><span class="rp-action">[Твой ник] дал(а) обидную пощечину [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">послать</span><span class="rp-action">[Твой ник] послал(а) куда подальше [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">унизить</span><span class="rp-action">[Твой ник] публично унизил(а) [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">сжечь</span><span class="rp-action">[Твой ник] сжег(ла) на костре инквизиции [Его ник]</span></div>
+        </div>
+
+        <div class="cmd-group">
+            <div class="cmd-group-title">🌪 Эпик и Трэш</div>
+            <div class="rp-item"><span class="rp-word">сватнуть</span><span class="rp-action">[Твой ник] вызвал(а) отряд SWAT на дом к [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">подарить вселенную</span><span class="rp-action">[Твой ник] подарил(а) целую вселенную для [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">отправить в космос</span><span class="rp-action">[Твой ник] привязал(а) к ракете и отправил(а) в космос [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">обоссать</span><span class="rp-action">[Твой ник] смачно обоссал(а) лицо [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">насрать</span><span class="rp-action">[Твой ник] навалил(а) огромную кучу на [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">скурить</span><span class="rp-action">[Твой ник] скрутил(а) в блант и скурил(а) [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">лизнуть розетку</span><span class="rp-action">[Твой ник] лизнул(а) розетку на спор с [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">гавкнуть</span><span class="rp-action">[Твой ник] громко гавкнул(а) на [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">хрюкнуть</span><span class="rp-action">[Твой ник] по-свински хрюкнул(а) глядя на [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">станцевать гопак</span><span class="rp-action">[Твой ник] дико станцевал(а) гопак вокруг [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">подавиться</span><span class="rp-action">[Твой ник] подавился(ась) слюной из-за [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">удариться головой</span><span class="rp-action">[Твой ник] с разбегу ударился(ась) головой об [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">закосплеить</span><span class="rp-action">[Твой ник] нелепо закосплеил(а) [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">укусить за жопу</span><span class="rp-action">[Твой ник] больно укусил(а) за жопу [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">облить шампанским</span><span class="rp-action">[Твой ник] устроил(а) душ из шампанского для [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">закидать помидорами</span><span class="rp-action">[Твой ник] закидал(а) тухлыми помидорами [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">дать корону</span><span class="rp-action">[Твой ник] торжественно надел(а) корону на [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">сделать рабом</span><span class="rp-action">[Твой ник] посадил(а) на цепь и сделал(а) рабом [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">бросить в вулкан</span><span class="rp-action">[Твой ник] сбросил(а) прямо в жерло вулкана [Его ник]</span></div>
     </div>
-    <script>
-        // Инициализируем Телеграм
+        <div class="cmd-group">
+            <div class="cmd-group-title">💻 Хакерские и IT</div>
+            <div class="rp-item"><span class="rp-word">задоксить</span><span class="rp-action">[Твой ник] слил(а) все личные данные [Его ник] в сеть</span></div>
+            <div class="rp-item"><span class="rp-word">снести</span><span class="rp-action">[Твой ник] безвозвратно снес(ла) аккаунт [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">ддосить</span><span class="rp-action">[Твой ник] положил(а) роутер и интернет [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">задеанонить</span><span class="rp-action">[Твой ник] полностью раскрыл(а) личность [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">взломать</span><span class="rp-action">[Твой ник] успешно взломал(а) телефон [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">забанить</span><span class="rp-action">[Твой ник] выдал(а) перманентный бан для [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">завирусить</span><span class="rp-action">[Твой ник] закинул(а) троян на комп [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">отформатировать</span><span class="rp-action">[Твой ник] отформатировал(а) жесткий диск [Его ник]</span></div>
+        </div>
+
+        <div class="cmd-group">
+            <div class="cmd-group-title">🤪 Безумие и Абсурд</div>
+            <div class="rp-item"><span class="rp-word">выпороть</span><span class="rp-action">[Твой ник] жестоко выпорол(а) ремнем [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">украсть сердце</span><span class="rp-action">[Твой ник] как настоящий вор украл(а) сердце [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">упасть в обморок</span><span class="rp-action">[Твой ник] упал(а) в обморок прямо на руки [Его ник]</span></div>
+            <div class="rp-item"><span class="rp-word">сделать кувырок</span><span class="rp-action">[Твой ник] сделал(а) сальто назад, чтобы впечатлить [Его ник]</span></div>
+        </div>
+    </div> <script>
+        // Инициализация Telegram Web App
         let tg = window.Telegram.WebApp;
-        tg.expand();
+        
+        // Принудительно разворачиваем на весь экран телефона
+        tg.expand(); 
+        
+        // Сообщаем Телеграму, что наш огромный сайт полностью загрузился
+        tg.ready();
 
-        // 1. ДОСТАЕМ ИМЯ ИЗ ТЕЛЕГРАМА
-        let rawName = tg.initDataUnsafe?.user?.first_name || "Неизвестный Боец";
-        document.getElementById("userName").innerText = rawName;
-
-        // 2. УВЕДОМЛЕНИЯ (КРАСНЫЕ И ЗЕЛЕНЫЕ НА 3 СЕК)
-        function showToast(message, isError = true) {
-            let toast = document.getElementById("toast");
-            toast.innerText = message;
-            
-            // Если ошибка - красный, если успех - зеленый
-            if(isError) {
-                toast.classList.remove('success');
-            } else {
-                toast.classList.add('success');
-            }
-            
-            toast.classList.add('show');
-            // Убираем ровно через 3 секунды
-            setTimeout(() => { toast.classList.remove('show'); }, 3000);
-        }
-
-        // 3. ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
+        // Главная функция переключения вкладок меню
         function openTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(tabName).classList.add('active');
-            event.currentTarget.classList.add('active');
-        }
-
-        // 4. СМЕНА НИКА
-        function showNickEditor() {
-            let card = document.getElementById("editNickCard");
-            card.style.display = card.style.display === "none" ? "block" : "none";
-        }
-
-        function saveNick() {
-            let newNick = document.getElementById("newNickInput").value;
-            if(newNick.trim() === "") {
-                return showToast("❌ Введи нормальный ник!");
-            }
-            // Отправляем в бота, но НЕ закрываем окно
-            tg.sendData("nick_" + newNick);
-            document.getElementById("userName").innerText = newNick;
-            document.getElementById("editNickCard").style.display = "none";
-            showToast("✅ Ник изменен! (Бот подтвердит в чате)", false);
-        }
-
-        // 5. ПОКУПКА В МАГАЗИНЕ
-        function buyItem(itemId, price) {
-            // Отправляем команду покупки в Термукс (Питону)
-            tg.sendData("buy_" + itemId);
-            // Показываем красивое зеленое уведомление
-            showToast("🛒 Запрос отправлен! Смотри ответ бота.", false);
-        }
-
-        // 6. АНИМАЦИЯ КАЗИНО
-        const slots = ["🍒", "🍋", "💎", "🔔", "7️⃣", "💀"];
-        function spinCasino() {
-            let bet = document.getElementById("betInput").value;
-            if(bet === "" || bet <= 0) {
-                return showToast("❌ Введи нормальную ставку!");
-            }
-            
-            let btn = document.getElementById("spinBtn");
-            let display = document.getElementById("slots");
-            
-            btn.disabled = true;
-            btn.innerText = "Крутится...";
-
-            let spins = 0;
-            let timer = setInterval(() => {
-                let r1 = slots[Math.floor(Math.random() * slots.length)];
-                let r2 = slots[Math.floor(Math.random() * slots.length)];
-                let r3 = slots[Math.floor(Math.random() * slots.length)];
-                display.innerText = r1 + r2 + r3;
-                spins++;
-
-                if(spins > 15) {
-                    clearInterval(timer);
-                    btn.disabled = false;
-                    btn.innerText = "🎰 КРУТИТЬ (в чат)";
-                    
-                    // Отправляем ставку в Питона
-                    tg.sendData("casino_" + bet);
-                    showToast("🎰 Ставка улетела в бота!", false);
-                }
-            }, 100);
-        }
-
-        // 7. РАСКРЫВАЮЩИЕСЯ СПИСКИ (АККОРДЕОНЫ ДЛЯ ПОМОЩИ)
-        let acc = document.getElementsByClassName("accordion");
-        for (let i = 0; i < acc.length; i++) {
-            acc[i].addEventListener("click", function() {
-                this.classList.toggle("active");
-                let panel = this.nextElementSibling;
-                if (panel.style.maxHeight) {
-                    panel.style.maxHeight = null;
-                } else {
-                    panel.style.maxHeight = panel.scrollHeight + "px";
-                }
+            // 1. Прячем все контентные блоки (Профиль, Игры и т.д.)
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
             });
+            
+            // 2. Снимаем синее выделение со всех кнопок в шапке
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // 3. Показываем нужный блок по его имени (например 'rp' или 'profile')
+            document.getElementById(tabName).classList.add('active');
+            
+            // 4. Делаем активной ту кнопку, на которую мы только что нажали
+            event.currentTarget.classList.add('active');
+            
+            // 5. Легкая вибрация телефона при переключении (фишка для крутых приложений)
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('light');
+            }
         }
     </script>
 </body>
 </html>
+    
